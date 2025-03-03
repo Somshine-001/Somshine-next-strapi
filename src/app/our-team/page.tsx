@@ -28,9 +28,9 @@ function TeamMemberCard({
   photo,
   slug,
 }: Readonly<TeamMemberProps>) {
-  const imageUrl = `${
-    process.env.API_URL ?? "http://localhost:1337"
-  }${photo.url}`;
+  const imageUrl = `${process.env.API_URL ?? "http://localhost:1337"}${
+    photo.url
+  }`;
   return (
     <Link
       href={`/our-team/${slug}`}
@@ -63,13 +63,13 @@ function TeamMemberCard({
 // }
 
 export const getTeamMembers = async () => {
-  const res = await fetchApi("/api/team-members", {
+  const res = await fetchApi("/api/team-members", {}, {
     photo: {
       fields: ["alternativeText", "name", "url"],
     },
-  });
+  },);
   if (res) {
-    if(res.status === 200) {
+    if (res.status === 200) {
       return res.data;
     }
   }

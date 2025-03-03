@@ -1,49 +1,65 @@
-// import { cookies } from "next/headers";
+import { cookies } from "next/headers";
 import qs from "qs";
 
 interface FetchResponse<T> {
   data: T | null;
-  status: number;
-  error?: string;
+  status?: number;
+  error?: {};
 }
-
 export const fetchApi = async <T>(
   path: string,
-  populate?: any,
-  options: RequestInit & {
-    isMultipart?: boolean;
-  } = {
+  options: RequestInit & {} = {
     method: "GET",
-    isMultipart: false,
   },
+  populate?: any,
+  filters?: any,
 ): Promise<FetchResponse<T>> => {
-  // const coockie = await cookies();
-  // const accessToken = coockie.get("access_token")?.value || "";
-  const headers = {
-    "Content-Type": "application/json",
-    // Authorization: `Bearer ${accessToken || ""}`,
-  };
-
-  const getUrl = (path: string, populate = {}) => {
-    if (populate) {
-      const url = new URL(path, process.env.API_URL);
-      url.search = qs.stringify({
-        populate: populate,
-      });
-      return url;
-    } else {
-      return `${process.env.API_URL}${path}`;
-    }
+  let headers = {};
+  const coockie = await cookies();
+  const accessToken = coockie.get("access_token")?.value || "";
+  if (accessToken !== "") {
+    headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    };
+  } else {
+    headers = {
+      "Content-Type": "application/json",
+    };
   }
 
-  const url = getUrl(path, populate);
+  let url: any;
+  if (populate) {
+    let queryParams: any = {};
+    queryParams = populate;
+    if (filters) {
+      queryParams.filters = filters;
+    }
+    const newUrl = new URL(path, process.env.API_URL);
+    newUrl.search = qs.stringify({
+      populate: queryParams
+    });
+    url = newUrl;
+  } else {
+    url = `${process.env.API_URL}${path}`;
+  }
 
   try {
     const response = await fetch(url, { ...options, headers });
     if (!response.ok) {
-      const error = await response.text();
-      //console.log(error);
-      return { data: null, status: response.status, error };
+      const errorResponse = await response.json();
+      
+      // แปลง escaped JSON string ที่ได้
+      let errorData = null;
+      try {
+        const parsedError = JSON.parse(errorResponse.value);  // parse ค่า value ที่เป็น string เป็น object
+        errorData = parsedError.error || parsedError;  // ดึงข้อมูล error จาก parsed value
+      } catch (parseError) {
+        // ถ้าไม่สามารถ parse ได้ให้ใช้ข้อมูลเดิมที่เป็น object
+        errorData = errorResponse;
+      }
+
+      return { data: null, error: errorData };
     }
     const result = await response.json();
     return {

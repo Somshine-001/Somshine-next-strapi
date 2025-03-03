@@ -9,8 +9,14 @@ export const setAccessToken = async (token: string) => {
   });
 };
 
-export const fetchActionApi = async <T>(path: string, options: RequestInit & {
-  isMultipart?: boolean;
-}) => {
-  return fetchApi<T>(path, options);
+export const fetchActionApi = async <T>(
+  path: string,
+  options: RequestInit & {} = {
+    method: "GET",
+  },
+  populate?: any,
+  filters?: any,
+) => {
+
+  return fetchApi<T>(path, options, populate, filters);
 };
