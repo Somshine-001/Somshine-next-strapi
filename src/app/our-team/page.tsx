@@ -63,11 +63,17 @@ function TeamMemberCard({
 // }
 
 export const getTeamMembers = async () => {
-  const res = await fetchApi("/api/team-members", {}, {
-    photo: {
-      fields: ["alternativeText", "name", "url"],
-    },
-  },);
+  const res = await fetchApi(
+    "/api/team-members",
+    {},
+    {
+      populate: {
+        photo: {
+          fields: ["alternativeText", "name", "url"],
+        },
+      },
+    }
+  );
   if (res) {
     if (res.status === 200) {
       return res.data;

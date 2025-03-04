@@ -31,13 +31,13 @@ export const fetchApi = async <T>(
   let url: any;
   if (populate) {
     let queryParams: any = {};
-    queryParams = populate;
+    queryParams.populate = populate;
     if (filters) {
       queryParams.filters = filters;
     }
     const newUrl = new URL(path, process.env.API_URL);
     newUrl.search = qs.stringify({
-      populate: queryParams
+      queryParams
     });
     url = newUrl;
   } else {
@@ -49,13 +49,11 @@ export const fetchApi = async <T>(
     if (!response.ok) {
       const errorResponse = await response.json();
       
-      // แปลง escaped JSON string ที่ได้
       let errorData = null;
       try {
-        const parsedError = JSON.parse(errorResponse.value);  // parse ค่า value ที่เป็น string เป็น object
-        errorData = parsedError.error || parsedError;  // ดึงข้อมูล error จาก parsed value
+        const parsedError = JSON.parse(errorResponse.value);
+        errorData = parsedError.error || parsedError;
       } catch (parseError) {
-        // ถ้าไม่สามารถ parse ได้ให้ใช้ข้อมูลเดิมที่เป็น object
         errorData = errorResponse;
       }
 

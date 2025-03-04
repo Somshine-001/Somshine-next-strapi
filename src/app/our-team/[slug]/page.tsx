@@ -4,36 +4,41 @@ import { BlockRenderer, TeamPageBlock } from "../../component/blocks";
 import { fetchApi } from "@/app/utils/fetch";
 
 async function getTeamMember(slug: string) {
-  const res = await fetchApi(
+  const res = (await fetchApi(
     "/api/team-members",
+    {},
     {
-      photo: {
-        fields: ["alternativeText", "name", "url"],
-      },
-      blocks: {
-        on: {
-          "blocks.testimonial": {
-            populate: {
-              photo: {
-                fields: ["alternativeText", "name", "url"],
+      populate: {
+        photo: {
+          fields: ["alternativeText", "name", "url"],
+        },
+        blocks: {
+          on: {
+            "blocks.testimonial": {
+              populate: {
+                photo: {
+                  fields: ["alternativeText", "name", "url"],
+                },
               },
             },
-          },
-          "blocks.spoiler": {
-            populate: true,
-          },
-          "blocks.rich-text": {
-            populate: true,
+            "blocks.spoiler": {
+              populate: true,
+            },
+            "blocks.rich-text": {
+              populate: true,
+            },
           },
         },
       },
     },
     {
-      slug: {
-        $eq: slug, // This is the slug for our team member
+      filters: {
+        slug: {
+          $eq: slug, // This is the slug for our team member
+        },
       },
     }
-  ) as any;
+  )) as any;
   if (res) {
     if (res.status === 200) {
       return res.data?.data[0];
