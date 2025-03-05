@@ -1,6 +1,14 @@
 "use client";
-import { fetchActionApi } from "@/app/utils/action";
+import { fetchActionApi, setAccessToken } from "@/app/utils/action";
 import { useState } from "react";
+
+interface LoginResponse {
+  jwt: string;
+  user: {
+    id: number;
+    documentId: string;
+  };
+}
 
 export default function Login() {
   const [identifier, setIdentifier] = useState("");
@@ -15,11 +23,13 @@ export default function Login() {
     const res = await fetchActionApi("/api/auth/local", {
       method: "POST",
       body: JSON.stringify(body),
-    });
+    } as any);
     console.log(res);
-    if(res) {
+    if (res) {
+      const data = res.data as LoginResponse;;
         if (res.status === 200) {
-            window.location.href = "/";
+          await setAccessToken(data.jwt);
+          window.location.href = "/";
         } else {
             alert("เข้าสู่ระบบไม่สําเร็จ");
         }

@@ -36,9 +36,7 @@ export const fetchApi = async <T>(
       queryParams.filters = filters;
     }
     const newUrl = new URL(path, process.env.API_URL);
-    newUrl.search = qs.stringify({
-      queryParams
-    });
+    newUrl.search = qs.stringify(queryParams);
     url = newUrl;
   } else {
     url = `${process.env.API_URL}${path}`;

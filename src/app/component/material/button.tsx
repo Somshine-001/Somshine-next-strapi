@@ -5,7 +5,7 @@ export default function Button({
 }: {
   name: string;
   type?: string;
-  onClick: () => void;
+  onClick?: () => void;
 }) {
   return (
     <div>

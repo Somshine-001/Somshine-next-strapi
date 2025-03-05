@@ -9,6 +9,11 @@ export const setAccessToken = async (token: string) => {
   });
 };
 
+export const removeAccessToken = async () => {
+  const cookie = await cookies();
+  cookie.delete("access_token");
+}
+
 export const fetchActionApi = async <T>(
   path: string,
   options: RequestInit & {} = {

@@ -67,16 +67,15 @@ export const getTeamMembers = async () => {
     "/api/team-members",
     {},
     {
-      populate: {
-        photo: {
-          fields: ["alternativeText", "name", "url"],
-        },
+      photo: {
+        fields: ["alternativeText", "name", "url"],
       },
     }
   );
   if (res) {
-    if (res.status === 200) {
-      return res.data;
+    if (res.status !== 200) {
+      console.log(res);
+      return;
     }
   }
   return res.data;
@@ -89,7 +88,7 @@ export default async function OurTeam() {
     <div>
       <h1 className="text-3xl font-bold mb-8">Our Team</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {teamMembers.data.map((member: TeamMemberProps) => (
+        {teamMembers && teamMembers.data.map((member: TeamMemberProps) => (
           <TeamMemberCard key={member.documentId} {...member} />
         ))}
       </div>
