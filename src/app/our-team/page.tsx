@@ -50,18 +50,6 @@ function TeamMemberCard({
   );
 }
 
-// async function getTeamMembers() {
-//   const populate = {
-//     photo: {
-//       fields: ["alternativeText", "name", "url"],
-//     },
-//   };
-//   const res = await fetchApi(`/api/team-members`, populate, {method: "GET"});
-//   console.log(res);
-
-//   return res;
-// }
-
 export const getTeamMembers = async () => {
   const res = await fetchApi(
     "/api/team-members",
